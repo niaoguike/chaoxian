@@ -21,7 +21,7 @@ for name,voucher,threads,loops,duration,expect,users,recycle in CASES:
     while True:
         count=int(sql('SELECT COUNT(*) FROM tb_voucher_order WHERE voucher_id=%d;'%voucher).strip())
         if count==expected:break
-        if time.monotonic()-start>180:raise RuntimeError('Orders did not drain: %s expected=%s actual=%s'%(name,expected,count))
+        if time.monotonic()-start>(40 if name=='warmup' else 180):raise RuntimeError('Orders did not drain: %s expected=%s actual=%s'%(name,expected,count))
         time.sleep(1)
     stock=int(sql('SELECT stock FROM tb_seckill_voucher WHERE voucher_id=%d;'%voucher).strip())
     duplicates=int(sql('SELECT COUNT(*) FROM (SELECT user_id FROM tb_voucher_order WHERE voucher_id=%d GROUP BY user_id HAVING COUNT(*)>1) t;'%voucher).strip())
@@ -34,3 +34,4 @@ for name,voucher,threads,loops,duration,expect,users,recycle in CASES:
     summary['cases'].append(item);(RESULT/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2));print(json.dumps(item),flush=True)
     subprocess.run(BASE+['-g',str(path),'-o',str(RESULT/(name+'-html')),'-j',str(RESULT/(name+'-report.log'))],cwd=ROOT,check=True)
 print('BENCHMARK_COMPLETE',flush=True)
+
