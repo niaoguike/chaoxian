@@ -1,0 +1,9 @@
+local-secrets.json
+users.csv
+*.pid
+*.log
+single.csv
+
+__pycache__/
+*.pyc
+*.hprof
