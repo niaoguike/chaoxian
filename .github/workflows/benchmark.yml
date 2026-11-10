@@ -25,7 +25,9 @@ jobs:
       - name: Prepare real dependencies and JMeter
         working-directory: performance
         run: |
-          echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          export JWT_SECRET=$(openssl rand -hex 32)
+          echo "::add-mask::$JWT_SECRET"
+          echo "JWT_SECRET=$JWT_SECRET" >> "$GITHUB_ENV"
           printf 'BENCH_DB_PASSWORD=%s\n' "$BENCH_DB_PASSWORD" > .env
           docker compose --env-file .env -f compose.yaml up -d
           command -v mysql || (sudo apt-get update && sudo apt-get install -y mysql-client)
