@@ -33,6 +33,7 @@ public class OrderMessaging implements TransactionListener {
         delayed = new DefaultMQProducer("chaoxian-close-producer");
         delayed.setNamesrvAddr(nameserver); delayed.start();
         consumer = new DefaultMQPushConsumer("chaoxian-order-consumer");
+        consumer.setConsumeFromWhere(org.apache.rocketmq.common.consumer.ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setNamesrvAddr(nameserver); consumer.subscribe("chaoxian-orders", "*");
         consumer.subscribe("chaoxian-close", "*");
         consumer.registerMessageListener((MessageListenerConcurrently)(messages, context) -> {
